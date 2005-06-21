@@ -40,16 +40,8 @@ static void All_Shutdown()
 
 HINSTANCE global_hInstance;
 
-#include <geometry\geometry.h>
-
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	using MyGeometryTools::vec2;
-	vec2<float> normal(-1, -1);
-	normal.normalize();
-	vec2<float> vec(-1, -1);
-	vec.mirror(normal);
-
 	global_hInstance = hInstance;
 
 	try
@@ -82,15 +74,15 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 		while (1)
 		{
 			MSG msg;
-			while (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 			{
 				if (msg.message == WM_QUIT)
 				{
 					All_Shutdown();
 					return 0;
 				}
-				::TranslateMessage(&msg);
-				::DispatchMessage(&msg);
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
 			}
 			static double time(0), oldtime(0);
 			time = RealTime::getTime();
