@@ -1,0 +1,30 @@
+Microsoft Visual Studio Solution File, Format Version 8.00
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "arkanoid", "Arkanoid.vcproj", "{53D90C77-CD81-41FA-BD75-C4E6FFB3DB6F}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 2
+		SccLocalPath0 = .
+		CanCheckoutShared = false
+		SolutionUniqueID = {4DB5953B-4D5A-43E4-86A4-502B55676A7A}
+		SccProjectUniqueName1 = Arkanoid.vcproj
+		SccLocalPath1 = .
+		CanCheckoutShared = false
+	EndGlobalSection
+	GlobalSection(SolutionConfiguration) = preSolution
+		Debug = Debug
+		Release = Release
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{53D90C77-CD81-41FA-BD75-C4E6FFB3DB6F}.Debug.ActiveCfg = Debug|Win32
+		{53D90C77-CD81-41FA-BD75-C4E6FFB3DB6F}.Debug.Build.0 = Debug|Win32
+		{53D90C77-CD81-41FA-BD75-C4E6FFB3DB6F}.Release.ActiveCfg = Release|Win32
+		{53D90C77-CD81-41FA-BD75-C4E6FFB3DB6F}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
