@@ -1,3 +1,6 @@
+#include "StdAfx.h"
+#pragma hdrstop
+
 #include "a_shared.h"
 #include "Controls.h"
 

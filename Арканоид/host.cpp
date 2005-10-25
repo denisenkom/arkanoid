@@ -1,3 +1,6 @@
+#include "StdAfx.h"
+#pragma hdrstop
+
 #include "a_shared.h"
 #include "Server.h"
 #include "Client.h"
@@ -6,7 +9,7 @@
 #include "log.h"
 #include "Realtime.h"
 
-extern double Host::frametime = 0;
+extern float Host::frametime = 0;
 //extern int Host::exit = 0;
 
 //static double time, oldtime = 0;

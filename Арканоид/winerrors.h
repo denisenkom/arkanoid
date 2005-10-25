@@ -1,10 +1,6 @@
 #ifndef WINERRORS_H
 #define WINERRORS_H
 
-#include <windows.h>
-#include <string>
-#include <assert.h>
-
 // Returns error description for Windows errors
 // Parameters:
 //	err [in] - error number

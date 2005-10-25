@@ -1,5 +1,5 @@
-#include <stdexcept>
-#include <assert.h>
+#include "StdAfx.h"
+#pragma hdrstop
 
 #include "a_shared.h"
 #include "Game.h"

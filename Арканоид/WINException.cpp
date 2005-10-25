@@ -1,15 +1,7 @@
-// WINException.cpp: implementation of the WINException class.
-//
-//////////////////////////////////////////////////////////////////////
+#include "StdAfx.h"
+#pragma hdrstop
 
-#include <exception>
-#include <string>
-#include <windows.h>
 #include "WINException.h"
-
-//////////////////////////////////////////////////////////////////////
-// Construction/Destruction
-//////////////////////////////////////////////////////////////////////
 
 WINException::WINException(const char * msg)
 	: message(msg), errid(::GetLastError())

@@ -119,3 +119,42 @@ struct player {
 	int pts;
 	color_enum color;
 };
+
+template<typename Type>
+class vec2 {
+public:
+	Type x;
+	Type y;
+
+
+	vec2(Type x, Type y) : x(x), y(y) {}
+
+	Type length() const { return sqrt(x * x + y * y); }
+	void normalize() { Type len = length(); if( len == Type(1.0) ) return; x /= len; y /= len; }
+	void mirror(const vec2<Type>& normal);
+	Type dotProduct(const vec2<Type>& right) const;
+	vec2& operator *=(Type factor) { x *= factor; y *= factor; return *this; }
+	vec2& operator +=(const vec2<Type>& right) { x += right.x; y += right.y; return *this; }
+	vec2 operator +(const vec2<Type>& right) { vec2<Type> result(*this); return result += right; }
+	vec2& rotate90cw() { Type saveY = y; y = -x; x = saveY; return *this; }
+	vec2& rotate90ccw() { Type saveY = y; y = x; x = -saveY; return *this; }
+};
+
+template<typename Type>
+Type vec2<Type>::dotProduct(const vec2<Type>& right) const {
+	return x * right.x + y * right.y;
+}
+
+template<typename Type>
+void vec2<Type>::mirror(const vec2<Type>& normal) {
+	vec2<Type> normalComponent(normal);
+	normalComponent *= normal.dotProduct(*this);
+
+	vec2<Type> normal90ccw(normal);
+	normal90ccw.rotate90ccw();
+
+	vec2<Type> normal90ccwComponent(normal90ccw);
+	normal90ccwComponent *= normal90ccw.dotProduct(*this);
+
+	*this = normalComponent + normal90ccwComponent;
+}

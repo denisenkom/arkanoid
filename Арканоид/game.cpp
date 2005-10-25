@@ -1,7 +1,5 @@
-#include <stdexcept>
-#include <math.h>
-#include <assert.h>
-#include <geometry\geometry.h>
+#include "StdAfx.h"
+#pragma hdrstop
 
 #include "a_shared.h"
 #include "Game.h"
@@ -128,8 +126,6 @@ player Game::players[4] = {0};
 
 void ReflectBall(Ball &ball, float nx, float ny, float rel_spd)
 {
-	using MyGeometryTools::vec2;
-	using MyGeometryTools::matrix2;
 	/*float sinb, cosb;
 	sinb = -ny;
 	cosb = nx;
@@ -143,9 +139,12 @@ void ReflectBall(Ball &ball, float nx, float ny, float rel_spd)
 
 bool IsIntersection(Ball &ball1, Ball &ball2)
 {
-	float rad1 = ball1.width/2, rad2 = ball2.width/2;
-	float cx1 = ball1.x + rad1, cy1 = ball1.y + rad1,
-		cx2 = ball2.x + rad2, cy2 = ball2.y + rad2;
+	float radius1 = ball1.width / 2.0f;
+	float radius2 = ball2.width / 2.0f;
+	float cx1 = ball1.x + radius1;
+	float cy1 = ball1.y + radius1;
+	float cx2 = ball2.x + radius2;
+	float cy2 = ball2.y + radius2;
 
 	float range = sqrtf((cx1 - cx2)*(cx1 - cx2) + (cy1 - cy2)*(cy1 - cy2));
 
@@ -161,25 +160,24 @@ bool IsIntersection(Ball &ball1, Ball &ball2)
 		// новая скорость шаров есть половина суммы бывших скоростей, из закона сохранения
 		// импульса и т.к. массы шаров одинаковы
 		float newspeed = (speed1 + speed2)/2;
-		using MyGeometryTools::vec2;
 		vec2<float> normal(cx2 - cx1, cy2 - cy1);
 		normal.normalize();
 		ReflectBall(ball1, normal.x, normal.y, newspeed/speed1);
 		ReflectBall(ball2, -normal.x, -normal.y, newspeed/speed2);
-		float correct = (range - rad1 + rad2)/2/newspeed;
+		float correct = (range - radius1 + radius2)/2/newspeed;
 		ball1.x += ball1.vx*correct;
 		ball1.y += ball1.vy*correct;
 		ball2.x += ball2.vx*correct;
 		ball2.y += ball2.vy*correct;
 		Server::Sound(BALL_HIT, 1, 6000);
 		{
-	float rad1 = ball1.width/2, rad2 = ball2.width/2;
-	float cx1 = ball1.x + rad1, cy1 = ball1.y + rad1,
-		cx2 = ball2.x + rad2, cy2 = ball2.y + rad2;
+	float radius1 = ball1.width/2, radius2 = ball2.width/2;
+	float cx1 = ball1.x + radius1, cy1 = ball1.y + rad1,
+		cx2 = ball2.x + radius2, cy2 = ball2.y + rad2;
 
 	float range = sqrtf((cx1 - cx2)*(cx1 - cx2) + (cy1 - cy2)*(cy1 - cy2));
 
-	assert(range > rad1 + rad2);
+	//assert(range > radius1 + radius2);
 		}
 	}
 	return false;

@@ -1,4 +1,5 @@
-#include <exception>
+#include "StdAfx.h"
+#pragma hdrstop
 
 #include "a_shared.h"
 #include "Screen.h"

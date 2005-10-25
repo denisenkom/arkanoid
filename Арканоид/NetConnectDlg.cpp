@@ -1,7 +1,8 @@
-#include <windows.h>
-#include <commctrl.h>
-#include <stdio.h>
-#include <stdexcept>
+#include "StdAfx.h"
+#pragma hdrstop
+
+using namespace std;
+
 #include "winerrors.h"
 
 #include "a_shared.h"
@@ -26,30 +27,20 @@ HANDLE hNetworkThread = NULL;
 
 DWORD WINAPI NetworkThread(LPVOID) throw ()
 {
-	while (true)
+	while (!FinishNetworkThread)
 	{
-		try
+		if (Server::active)
 		{
-			while (!FinishNetworkThread)
-			{
-				if (Server::active)
-				{
-					Server::datagramm.buffer.Clear();
-					Server::CheckWaitingClients();
-					Server::ParseClientsMessages();
-					Server::SendDatagrams();
-				}
-				if (Client::connected)
-					Client::ParseServerMessages();
-				::Sleep(100);
-			}
-			return 0;
+			Server::datagramm.buffer.Clear();
+			Server::CheckWaitingClients();
+			Server::ParseClientsMessages();
+			Server::SendDatagrams();
 		}
-		catch (...)
-		{
-			//assert_winerror(::MessageBox(NULL, ex.what(), NULL, MB_ICONSTOP));
-		}
+		if (Client::connected)
+			Client::ParseServerMessages();
+		::Sleep(100);
 	}
+	return 0;
 }
 
 BOOL OnCommand(WORD wNotifyCode, WORD wID, HWND hwndCtl) throw ()
@@ -89,7 +80,7 @@ BOOL OnCommand(WORD wNotifyCode, WORD wID, HWND hwndCtl) throw ()
 			catch (std::exception &ex)
 			{
 				Server::Activate(false);
-				assert_winerror(::MessageBoxA(0, (std::string("Ошибка при запуске сервера: ") += ex.what()).c_str(), NULL, MB_ICONSTOP));
+				::MessageBoxA(0, (std::string("Ошибка при запуске сервера: ") += ex.what()).c_str(), NULL, MB_ICONSTOP);
 			}
 			return 1;
 
@@ -99,15 +90,15 @@ BOOL OnCommand(WORD wNotifyCode, WORD wID, HWND hwndCtl) throw ()
 			if (Client::connected)
 				Client::Disconnect();
 			char address[256];
-			assert_winerror(::GetWindowTextA(GetDlgItem(NetConnectDlg::hwnd, IDC_ADDRESS), address, sizeof(address)));
+			::GetWindowTextA( GetDlgItem(NetConnectDlg::hwnd, IDC_ADDRESS), address, sizeof(address) );
 			try
 			{
 				Client::Connect(address);
-				assert_winerror(::MessageBoxA(NetConnectDlg::hwnd, "Подключение успешно", "Арканоид", MB_ICONINFORMATION));
+				::MessageBoxA(NetConnectDlg::hwnd, "Подключение успешно", "Арканоид", MB_ICONINFORMATION);
 			}
 			catch (std::exception& ex)
 			{
-				assert_winerror(::MessageBoxA(NetConnectDlg::hwnd, ex.what(), "Ошибка", MB_ICONEXCLAMATION));
+				::MessageBoxA(NetConnectDlg::hwnd, ex.what(), "Ошибка", MB_ICONEXCLAMATION);
 			}
 			return 1;
 
@@ -119,7 +110,7 @@ BOOL OnCommand(WORD wNotifyCode, WORD wID, HWND hwndCtl) throw ()
 				return 0;
 
 			char message[256];
-			assert_winerror(::GetWindowText(GetDlgItem(NetConnectDlg::hwnd, IDC_CHATEDIT), message, sizeof(message)));
+			::GetWindowText( GetDlgItem(NetConnectDlg::hwnd, IDC_CHATEDIT), message, sizeof(message) );
 			Client::Say(message);
 			return 1;
 
@@ -132,7 +123,7 @@ BOOL OnCommand(WORD wNotifyCode, WORD wID, HWND hwndCtl) throw ()
 		if (wNotifyCode == EN_CHANGE && wID == IDC_NAME)
 		{
 			char name[256];
-			assert_winerror(::GetWindowText(hwndCtl, name, sizeof(name)));
+			::GetWindowText( hwndCtl, name, sizeof(name) );
 			strcpy(Client::name, name);
 			Client::SendClientInfo();
 		}
@@ -147,14 +138,14 @@ BOOL CALLBACK NetConnectDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM l
 	case WM_INITDIALOG:
 		NetConnectDlg::hwnd = hwndDlg;
 		DWORD thread_id;
-		assert_winerror(hNetworkThread = ::CreateThread(NULL, 0, &NetworkThread, NULL, 0, &thread_id));
+		hNetworkThread = ::CreateThread(NULL, 0, &NetworkThread, NULL, 0, &thread_id);
 		NetConnectDlg::hwndListView = GetDlgItem(hwndDlg, IDC_LISTVIEW);
 		NetConnectDlg::hwndChat = GetDlgItem(hwndDlg, IDC_CHAT);
 		int i;
 		for (i = 0; i < 4; i++)
 			::SendMessage(NetConnectDlg::hwndListView, LB_INSERTSTRING, -1, (LPARAM)(LPCTSTR)"<пусто>");
-		assert_winerror(SetWindowText(GetDlgItem(hwndDlg, IDC_NAME), Client::name));
-		assert_winerror(SetWindowText(GetDlgItem(hwndDlg, IDC_ADDRESS), "localhost"));
+		SetWindowText( GetDlgItem(hwndDlg, IDC_NAME), Client::name );
+		SetWindowText( GetDlgItem(hwndDlg, IDC_ADDRESS), "localhost" );
 		return 0;
 	
 	case WM_COMMAND:
@@ -178,21 +169,23 @@ void NetConnectDlg::Chat(int id, char* str) throw ()
 {
 	char string[256];
 	sprintf(string, "%s: %s", Client::players[id].name, str);
-	SendMessage(hwndChat, LB_INSERTSTRING, -1, (LPARAM)(LPCTSTR)string);
+	SendMessage( hwndChat, LB_INSERTSTRING, -1, (LPARAM)(LPCTSTR)string );
 }
 
 void NetConnectDlg::GameStarted() throw ()
 {
 	FinishNetworkThread = TRUE;
-	assert_winerror(EndDialog(NetConnectDlg::hwnd, IDOK));
+	EndDialog(NetConnectDlg::hwnd, IDOK);
 }
 
-int NetConnectDlg::Run() throw ()
-{
+int NetConnectDlg::Run() {
 	Log_Print("Starting connection dialog...\n");
-	INT_PTR res = DialogBoxParam(global_hInstance, MAKEINTRESOURCE(IDD_NETWORK),
-		NULL, &NetConnectDlgProc, 0l);
-	assert_winerror(res != -1);
-	assert_winerror(::WaitForSingleObject(hNetworkThread, 1000) == WAIT_OBJECT_0);
+	INT_PTR res = DialogBoxParam( global_hInstance, MAKEINTRESOURCE(IDD_NETWORK),
+		NULL, &NetConnectDlgProc, 0l );
+	if(res <= 0)
+		throw runtime_error(
+			( "Ошибка при создании диалога установки соединения: " +
+			winerror() ).c_str() );
+	::WaitForSingleObject(hNetworkThread, 1000);
 	return res;
 }

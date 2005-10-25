@@ -1,11 +1,6 @@
-#include <stdlib.h>
-#include <assert.h>
-#include <exception>
-#include <string>
-#include <windows.h>
-#include <windowsx.h>
-#include <mmsystem.h>
-#include <dsound.h>
+#include "StdAfx.h"
+#pragma hdrstop
+
 #include "winerrors.h"
 #include "dxerrors.h"
 
@@ -42,17 +37,17 @@ static pDirectSoundCreate_t pDirectSoundCreate = NULL;
 
 void Sound::Init()
 {
-	assert_winerror(hDSound = LoadLibrary("dsound.dll"));
-	assert_winerror(pDirectSoundCreate = (pDirectSoundCreate_t)GetProcAddress(hDSound, "DirectSoundCreate"));
-	assert_hres(pDirectSoundCreate(NULL, &_dsound, NULL));
-	assert_hres(_dsound->SetCooperativeLevel(global_hWnd, DSSCL_PRIORITY));
+	hDSound = LoadLibrary("dsound.dll");
+	pDirectSoundCreate = (pDirectSoundCreate_t)GetProcAddress(hDSound, "DirectSoundCreate");
+	pDirectSoundCreate(NULL, &_dsound, NULL);
+	_dsound->SetCooperativeLevel(global_hWnd, DSSCL_PRIORITY);
 
 	DSBUFFERDESC desc = {0};
 	desc.dwSize = sizeof(desc);
 	desc.dwFlags = DSBCAPS_PRIMARYBUFFER;
 	desc.dwBufferBytes = 0;
 	desc.lpwfxFormat = NULL;
-	assert_hres(_dsound->CreateSoundBuffer(&desc, &_soundbuffer, NULL));
+	_dsound->CreateSoundBuffer(&desc, &_soundbuffer, NULL);
 
 	/*char *buf1, *buf2;
 	DWORD bufsize1, bufsize2;
@@ -78,18 +73,19 @@ void Sound::PlaySnd(sound_enum sound_enum, float volume, long freq)
 	if (!initialized || !global_hWnd || fMinimized || !fActive)
 		return;
 
-	assert(_sndbuf[sound_enum] != 0);
+	if(_sndbuf[sound_enum] == 0)
+		return;
 
-	assert_hres(_sndbuf[sound_enum]->SetVolume((LONG)(volume - 1.0f)*10000));
-	assert_hres(_sndbuf[sound_enum]->SetFrequency(freq));
+	_sndbuf[sound_enum]->SetVolume((LONG)(volume - 1.0f)*10000);
+	_sndbuf[sound_enum]->SetFrequency(freq);
 
 	DWORD status;
 	_sndbuf[sound_enum]->GetStatus(&status);
 
 	if (status & DSBSTATUS_PLAYING)
-		assert_hres(_sndbuf[sound_enum]->Stop());
+		_sndbuf[sound_enum]->Stop();
 
-	assert_hres(_sndbuf[sound_enum]->Play(0, 0, 0));
+	_sndbuf[sound_enum]->Play(0, 0, 0);
 
 	/*if (hres != DS_OK)
 	{

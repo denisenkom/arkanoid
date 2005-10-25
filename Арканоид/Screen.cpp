@@ -1,5 +1,5 @@
-#include <exception>
-#include <stdlib.h>
+#include "StdAfx.h"
+#pragma hdrstop
 
 #include "a_shared.h"
 #include "Screen.h"
@@ -74,7 +74,7 @@ static void DrawSprite(int scx, int scy, sprites_enum sprite)
 {
 	if (sprite == BLOCK_FIRE1 || sprite == BLOCK_FIRE2 || sprite == BLOCK_FIRE3 || sprite == BLOCK_FIRE4)
 	{
-		int msec = RealTime::getTime()*1000;
+		int msec = int(RealTime::getTime() * 1000);
 		sprite = (sprites_enum)(BLOCK_FIRE1+(msec/200)%4);
 	}
 	rect_s rect = sprites_rects[sprite];
@@ -104,12 +104,22 @@ void Screen::Init()
 		throw std::exception("Failed to load background.");
 }
 
-void Screen::Update()
-{
-	static double time1, time2, time3, time4;
-	time1 = RealTime::getTime();
+void Screen::Update() {
 	Graphics::Clear();
 
+	DrawGameField();
+
+	DrawEntities();
+
+	DrawScores();
+
+	//if (Game::paused)
+	//	Graphics::DrawTxt(SCN_WIDTH/2-20, SCN_HEIGHT/2, "PAUSED");
+
+	Graphics::Flush();
+}
+
+void Screen::DrawGameField() {
 	DrawSprite(0, GAME_Y-20, BOARDH_YELLOW);
 	DrawSprite(100, GAME_Y-20, BOARDH_YELLOW);
 	DrawSprite(200, GAME_Y-20, BOARDH_YELLOW);
@@ -119,8 +129,6 @@ void Screen::Update()
 	DrawSprite(100, GAME_Y+GAME_HEIGHT, BOARDH_RED);
 	DrawSprite(200, GAME_Y+GAME_HEIGHT, BOARDH_RED);
 	DrawSprite(300, GAME_Y+GAME_HEIGHT, BOARDH_RED);
-
-	time2 = RealTime::getTime();
 
 	rect_s rect = {0, 0, BACK_WIDTH, BACK_HEIGHT};
 
@@ -136,41 +144,28 @@ void Screen::Update()
 	rect.width = BACK_WIDTH-rect.left;
 	rect.height = GAME_HEIGHT-BACK_HEIGHT-rect.top;
 	Graphics::DrawImg(backgr_img, GAME_X, GAME_Y+BACK_HEIGHT, rect);
+}
 
-	{for (int i = 0; i < MAX_ENTITIES; i++) {
-		if (Client::entities[i].visible)
-			DrawSprite(GAME_X + (int)Client::entities[i].x, GAME_Y + GAME_HEIGHT - (int)(Client::entities[i].y + sprites_rects[Client::entities[i].sprite].height), Client::entities[i].sprite);
-	}}
+void Screen::DrawEntities() {
+	for (int i = 0; i < MAX_ENTITIES; i++)
+		if (Client::entities[i].visible) {
+			int spriteX = GAME_X + (int)Client::entities[i].x;
+			int spriteY =
+				GAME_Y + GAME_HEIGHT -
+				int(Client::entities[i].y) +
+				int(sprites_rects[Client::entities[i].sprite].height);
+			DrawSprite(spriteX, spriteY, Client::entities[i].sprite);
+		}
+}
 
-	//char stats[1024];
-	//sprintf(stats, "SLEEP: %i", Arkanoid::sleep_counter);
-	//Graphics::DrawText(0, 40, stats);
+void Screen::DrawScores() {
+	for (int i = 0; i < 4; i++) {
+		DrawSprite(SCN_WIDTH - 240, i * 120, SCORE_PANEL);
+		Graphics::DrawTxt(SCN_WIDTH - 240 + 110, i * 120 + 35,
+			Client::players[i].name);
 
-	for (int i = 0; i < 4; i++)
-	{
-		DrawSprite(SCN_WIDTH-240, i*120, SCORE_PANEL);
-		Graphics::DrawTxt(SCN_WIDTH-240+110, i*120+35, Client::players[i].name);
-		char _pts[256];
-		sprintf(_pts, "%i", Client::players[i].pts);
-		Graphics::DrawTxt(SCN_WIDTH-240+110, i*120+70, _pts);
+		char buffer[5];
+		Graphics::DrawTxt( SCN_WIDTH - 240 + 110, i * 120 + 70,
+			itoa(Client::players[i].pts, buffer, 10) );
 	}
-
-	time3 = RealTime::getTime();
-
-	//if (Game::paused)
-	//	Graphics::DrawTxt(SCN_WIDTH/2-20, SCN_HEIGHT/2, "PAUSED");
-
-	char str[30];
-	float alltime = time3 - time4;
-	float dt1 = time2 - time1;
-	float dt2 = time3 - time2;
-
-	sprintf(str, "fps: %d,\t%%1:%d,\t%%2:%d", int(1.0/alltime), int(dt1/alltime*100), int(dt2/alltime*100));
-	Graphics::DrawTxt(5, 10, str);
-
-	Graphics::Flush();
-
-	time4 = RealTime::getTime();
-
-	//Log_Print("background %f : ent %f : flush %f\n", time2-time1, time3-time2, time4-time3);
 }

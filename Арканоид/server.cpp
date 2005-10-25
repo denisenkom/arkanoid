@@ -1,5 +1,5 @@
-#include <exception>
-#include <string>
+#include "StdAfx.h"
+#pragma hdrstop
 
 #include "a_shared.h"
 #include "NET.h"

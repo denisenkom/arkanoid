@@ -1,4 +1,6 @@
-#include <stdexcept>
+#include "StdAfx.h"
+#pragma hdrstop
+
 #include "winerrors.h"
 
 #include "a_shared.h"
@@ -8,7 +10,7 @@
 
 void DIBRenderer::Init(bool fullscreen)
 {
-	assert_winerror(hdc = ::GetDC(global_hWnd));
+	hdc = ::GetDC(global_hWnd);
 	BITMAPINFO bmpinfo;
 	bmpinfo.bmiHeader.biSize = sizeof(bmpinfo.bmiHeader);
 	bmpinfo.bmiHeader.biWidth = SCN_WIDTH;
@@ -23,22 +25,22 @@ void DIBRenderer::Init(bool fullscreen)
 	bmpinfo.bmiHeader.biClrImportant = 0;
 	VOID * bits;
 	HBITMAP hbmp;
-	assert_winerror(hbmp = ::CreateDIBSection(NULL, &bmpinfo, DIB_RGB_COLORS, &bits, NULL, 0));
+	hbmp = ::CreateDIBSection(NULL, &bmpinfo, DIB_RGB_COLORS, &bits, NULL, 0);
 	//pbitmap = (unsigned short*)bits;
 	//pitch = SCN_WIDTH*2;
-	assert_winerror(hbackdc = ::CreateCompatibleDC(hdc));
-	assert_winerror(::SelectObject(hbackdc, hbmp));
+	hbackdc = ::CreateCompatibleDC(hdc);
+	::SelectObject(hbackdc, hbmp);
 }
 
 void DIBRenderer::Shutdown()
 {
-	assert_winerror(::DeleteDC(hbackdc));
+	::DeleteDC(hbackdc);
 	::ReleaseDC(global_hWnd, hdc);
 }
 
 /*void DIB_Clear()
 {
-	assert_winerror(BitBlt(hbackdc, 0, 0, SCN_WIDTH, SCN_HEIGHT, NULL, 0, 0, BLACKNESS));
+	BitBlt(hbackdc, 0, 0, SCN_WIDTH, SCN_HEIGHT, NULL, 0, 0, BLACKNESS);
 }
 
 int DIB_LoadImage(LPCTSTR img_name)
@@ -47,19 +49,19 @@ int DIB_LoadImage(LPCTSTR img_name)
 
 void DIB_DrawImage(int img_id, int x, int y, const RECT &bmp_rect)
 {
-	assert_winerror(BitBlt(hbackdc, x, y, bmp_rect.right-bmp_rect.left,
+	BitBlt(hbackdc, x, y, bmp_rect.right-bmp_rect.left,
 		bmp_rect.bottom-bmp_rect.top, cache[img_id],
-		bmp_rect.left, bmp_rect.top, SRCCOPY));
+		bmp_rect.left, bmp_rect.top, SRCCOPY);
 }*/
 
 void DIBRenderer::DrawText(int x, int y, const char* text)
 {
-	assert_winerror(::SetTextColor(hbackdc, RGB(255, 255, 255)) != CLR_INVALID);
-	assert_winerror(::SetBkColor(hbackdc, RGB(0, 0, 0)) != CLR_INVALID);
-	assert_winerror(TextOut(hbackdc, x, y, text, strlen(text)));
+	::SetTextColor( hbackdc, RGB(255, 255, 255) );
+	::SetBkColor( hbackdc, RGB(0, 0, 0) );
+	TextOut( hbackdc, x, y, text, strlen(text) );
 }
 
 void DIBRenderer::Flush()
 {
-	assert_winerror(BitBlt(hdc, 0, 0, SCN_WIDTH, SCN_HEIGHT, hbackdc, 0, 0, SRCCOPY));
+	BitBlt(hdc, 0, 0, SCN_WIDTH, SCN_HEIGHT, hbackdc, 0, 0, SRCCOPY);
 }

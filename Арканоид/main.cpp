@@ -1,7 +1,5 @@
-// Defines the entry point for the application.
-//
-#include <stdexcept>
-#include <stdlib.h>
+#include "StdAfx.h"
+#pragma hdrstop
 
 #include "a_shared.h"
 #include "winarkanoid.h"
@@ -17,7 +15,6 @@
 #include "Realtime.h"
 #include "log.h"
 #include "Game.h"
-#include <stdio.h>
 #include "winerrors.h"
 
 void Log_Print(const char* fmt, ...)
@@ -84,12 +81,12 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 			}
-			static double time(0), oldtime(0);
+			static float time(0), oldtime(0);
 			time = RealTime::getTime();
-			double dt = time - oldtime;
+			float dt = time - oldtime;
 
-			if (dt > 0.1)
-				dt = 0.1;
+			if (dt > 0.1f)
+				dt = 0.1f;
 			//else if (dt < 0.001)
 			//	dt = 0.001;
 
@@ -130,7 +127,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	catch (std::exception& ex)
 	{
 		All_Shutdown();
-		assert_winerror(::MessageBox(NULL, ex.what(), NULL, MB_ICONSTOP));
+		::MessageBox( NULL, ex.what(), NULL, MB_ICONSTOP );
 		return -1;
 	}
 

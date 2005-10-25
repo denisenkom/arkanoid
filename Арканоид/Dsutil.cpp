@@ -1,18 +1,5 @@
-/*==========================================================================
- *
- *  Copyright (C) 1995 Microsoft Corporation. All Rights Reserved.
- *
- *  File:       dsutil.cpp
- *  Content:    Routines for dealing with sounds from resources
- *
- *
- ***************************************************************************/
-
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <windowsx.h>
-#include <mmsystem.h>
-#include <dsound.h>
+#include "StdAfx.h"
+#pragma hdrstop
 
 typedef struct
 {

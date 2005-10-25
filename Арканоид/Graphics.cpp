@@ -1,4 +1,6 @@
-#include <stdexcept>
+#include "StdAfx.h"
+#pragma hdrstop
+
 #include "winerrors.h"
 #include "dxerrors.h"
 
@@ -19,13 +21,10 @@ extern HWND global_hWnd = NULL;
 extern int fActive = false;
 extern int fMinimized = false;
 
-// 
-//extern unsigned short* pbitmap = NULL;
-//extern unsigned pitch = 0;
 
 /* Local variables */
 static bool initialized = false;
-static bool fullscreen = true;
+static bool fullscreen = false;
 
 Renderer* pRenderer;
 
@@ -35,6 +34,13 @@ static struct
 	int height;
 	unsigned short* data;
 } cache[MAX_IMAGE_CACHE] = {0};
+
+
+// Local function prototypes
+
+void RegisterMainWindowClass();
+HWND CreateMainWindow();
+void DetermineWindowSize(SIZE* pSize);
 
 int MapKey(int vkey)
 {
@@ -83,8 +89,8 @@ static LRESULT CALLBACK wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 				clRect.left = clRect.top = 0;
 				clRect.right = SCN_WIDTH;
 				clRect.bottom = SCN_HEIGHT;
-				assert_winerror(::AdjustWindowRect(&clRect, WINDOW_STYLE, FALSE));
-				assert_winerror(::MoveWindow(global_hWnd, 20, 20, clRect.right-clRect.left, clRect.bottom-clRect.top, TRUE));
+				::AdjustWindowRect(&clRect, WINDOW_STYLE, FALSE);
+				::MoveWindow(global_hWnd, 20, 20, clRect.right-clRect.left, clRect.bottom-clRect.top, TRUE);
 				::ShowCursor(TRUE);
 			}
 			else
@@ -134,9 +140,43 @@ void Graphics::Init()
 {
 	if (initialized)
 		return;
-	
+
+	global_hWnd = CreateMainWindow();
+
+	::ShowWindow(global_hWnd, SW_SHOW);
+
+	pRenderer = &DirectDrawRenderer1;
+	pRenderer->Init(fullscreen);
+	initialized = true;
+}
+
+HWND CreateMainWindow() {
+	RegisterMainWindowClass();
+
+	SIZE windowSize;
+    DetermineWindowSize(&windowSize);
+
+	HWND result = ::CreateWindow(
+		WINDOW_CLASS,
+		"Arkanoid",
+		WINDOW_STYLE,
+		CW_USEDEFAULT, CW_USEDEFAULT, windowSize.cx, windowSize.cy,
+		NULL, // root window
+		NULL, // no menu
+		global_hInstance,
+		NULL  // no params
+	);
+
+	if (result == NULL)
+		throw WINException("Screen::Init(): CreateWindow(): ");
+
+	return result;
+}
+
+void RegisterMainWindowClass() {
 	WNDCLASSEX wcex;
-	wcex.cbSize = sizeof(WNDCLASSEX); 
+
+	wcex.cbSize         = sizeof(WNDCLASSEX); 
 	wcex.style			= CS_HREDRAW | CS_VREDRAW;
 	wcex.lpfnWndProc	= (WNDPROC)wndProc;
 	wcex.cbClsExtra		= 0;
@@ -148,36 +188,40 @@ void Graphics::Init()
 	wcex.lpszMenuName	= NULL;
 	wcex.lpszClassName	= WINDOW_CLASS;
 	wcex.hIconSm		= NULL;
-	assert_winerror(::RegisterClassEx(&wcex));
 
-	RECT clRect;
-	clRect.left = clRect.top = 0;
-	clRect.right = SCN_WIDTH;
-	clRect.bottom = SCN_HEIGHT;
-	assert_winerror(::AdjustWindowRect(&clRect, WINDOW_STYLE, FALSE));
+	if( !RegisterClassEx(&wcex) )
+		throw WINException("Ошибка при регистрации класса окна: ");
+}
 
-	if (!(global_hWnd = ::CreateWindow(WINDOW_CLASS, "Arkanoid", WINDOW_STYLE,
-		CW_USEDEFAULT, CW_USEDEFAULT, clRect.right-clRect.left, clRect.bottom-clRect.top,
-		NULL, NULL, global_hInstance, NULL)))
-		throw WINException("Screen::Init(): CreateWindow(): ");
-	::ShowWindow(global_hWnd, SW_SHOW);
-	assert_winerror(::UpdateWindow(global_hWnd));
+void DetermineWindowSize(SIZE* pSize) {
+	RECT rect;
 
-	pRenderer = &DirectDrawRenderer1;
-	pRenderer->Init(fullscreen);
-	initialized = true;
+	rect.left   = 0;
+	rect.top    = 0;
+	rect.right  = SCN_WIDTH;
+	rect.bottom = SCN_HEIGHT;
+
+	if( !AdjustWindowRect(&rect, WINDOW_STYLE, FALSE) ) {
+		pSize->cx = SCN_WIDTH  + 10;
+		pSize->cy = SCN_HEIGHT + 10;
+		return;
+	}
+
+	pSize->cx = rect.right  - rect.left;
+	pSize->cy = rect.bottom - rect.top;
 }
 
 void Graphics::Shutdown() throw()
 {
 	initialized = false;
 
-	pRenderer->Shutdown();
+	if(pRenderer)
+		pRenderer->Shutdown();
 
 	if (global_hWnd != NULL)
-		assert_winerror(::DestroyWindow(global_hWnd));
+		::DestroyWindow(global_hWnd);
 
-	assert_winerror(::UnregisterClass(WINDOW_CLASS, global_hInstance));
+	::UnregisterClass(WINDOW_CLASS, global_hInstance);
 }
 
 /*void Graphics::DrawTransparent(int scx, int scy)

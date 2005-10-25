@@ -1,6 +1,5 @@
-#include <stdio.h>
-#include <assert.h>
-#include <string>
+#include "StdAfx.h"
+#pragma hdrstop
 
 #include "Debug.h"
 

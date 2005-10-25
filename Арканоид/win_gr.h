@@ -57,6 +57,11 @@ public:
 	virtual Image* LoadImg(const char * file_or_resource_name);
 	virtual void DrawImg(Image* img, int scx, int scy, rect_s bmp_rect);
 	virtual void Clear();
+
+private:
+	void HookDirectDraw(bool fullscreen);
+	void CreateFrameBuffer(bool fullscreen);
+	void CreateBackBuffer(bool fullscreen);
 };
 extern DirectDrawRenderer DirectDrawRenderer1;
 

@@ -1,5 +1,5 @@
-#include <exception>
-#include <winsock2.h>
+#include "StdAfx.h"
+#pragma hdrstop
 
 #include "a_shared.h"
 #include "NET.h"

@@ -1,7 +1,7 @@
 
 namespace Host {
 	//extern int exit;
-	extern double frametime;
+	extern float frametime;
 
 	//void Frame();
 };

@@ -1,16 +1,6 @@
-/*==========================================================================
- *
- *  Copyright (C) 1995-1996 Microsoft Corporation. All Rights Reserved.
- *
- *  File:       ddutil.cpp
- *  Content:    Routines for loading bitmap and palettes from resources
- *
- ***************************************************************************/
-#undef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <windowsx.h>
-#include <ddraw.h>
+#include "StdAfx.h"
+#pragma hdrstop
+
 #include "winerrors.h"
 #include "dxerrors.h"
 
@@ -39,7 +29,7 @@ IDirectDrawSurface7 * DDLoadBitmap(IDirectDraw7 *pdd, LPCSTR szBitmap, int dx, i
     hbm = (HBITMAP)LoadImage(GetModuleHandle(NULL), szBitmap, IMAGE_BITMAP, dx, dy, LR_CREATEDIBSECTION);
 
     if (hbm == NULL)
-        assert_winerror(hbm = (HBITMAP)LoadImage(NULL, szBitmap, IMAGE_BITMAP, dx, dy, LR_LOADFROMFILE|LR_CREATEDIBSECTION));
+        hbm = (HBITMAP)LoadImage(NULL, szBitmap, IMAGE_BITMAP, dx, dy, LR_LOADFROMFILE|LR_CREATEDIBSECTION);
 
     if (hbm == NULL)
         return NULL;
@@ -47,7 +37,7 @@ IDirectDrawSurface7 * DDLoadBitmap(IDirectDraw7 *pdd, LPCSTR szBitmap, int dx, i
     //
     // get size of the bitmap
     //
-    assert_winerror(GetObject(hbm, sizeof(bm), &bm));      // get size of bitmap
+    GetObject( hbm, sizeof(bm), &bm );      // get size of bitmap
 
     //
     // create a DirectDrawSurface for this bitmap
@@ -63,9 +53,9 @@ IDirectDrawSurface7 * DDLoadBitmap(IDirectDraw7 *pdd, LPCSTR szBitmap, int dx, i
 		if (pdd->CreateSurface(&ddsd, &pdds, NULL) != DD_OK)
 			return NULL;
 
-    assert_hres(DDCopyBitmap(pdds, hbm, 0, 0, 0, 0));
+    DDCopyBitmap(pdds, hbm, 0, 0, 0, 0);
 
-    assert(DeleteObject(hbm));
+    DeleteObject(hbm);
 
     return pdds;
 }
@@ -134,7 +124,7 @@ HRESULT DDCopyBitmap(IDirectDrawSurface7 *pdds, HBITMAP hbm, int x, int y, int d
     //
 	if (pdds)
 	{
-		assert_hres(pdds->Restore());
+		pdds->Restore();
 	}
 	else
 		return NULL;
@@ -142,15 +132,15 @@ HRESULT DDCopyBitmap(IDirectDrawSurface7 *pdds, HBITMAP hbm, int x, int y, int d
     //
     //  select bitmap into a memoryDC so we can use it.
     //
-    assert(hdcImage = CreateCompatibleDC(NULL));
+    hdcImage = CreateCompatibleDC(NULL);
     if (!hdcImage)
         OutputDebugString("createcompatible dc failed\n");
-    assert(SelectObject(hdcImage, hbm));
+    SelectObject(hdcImage, hbm);
 
     //
     // get size of the bitmap
     //
-    assert_winerror(GetObject(hbm, sizeof(bm), &bm));    // get size of bitmap
+    GetObject( hbm, sizeof(bm), &bm );    // get size of bitmap
     dx = dx == 0 ? bm.bmWidth  : dx;    // use the passed size, unless zero
     dy = dy == 0 ? bm.bmHeight : dy;
 
@@ -159,15 +149,15 @@ HRESULT DDCopyBitmap(IDirectDrawSurface7 *pdds, HBITMAP hbm, int x, int y, int d
     //
     ddsd.dwSize = sizeof(ddsd);
     ddsd.dwFlags = DDSD_HEIGHT | DDSD_WIDTH;
-    assert_hres(pdds->GetSurfaceDesc(&ddsd));
+    pdds->GetSurfaceDesc(&ddsd);
 
     if ((hr = pdds->GetDC(&hdc)) == DD_OK)
     {
-        assert_winerror(StretchBlt(hdc, 0, 0, ddsd.dwWidth, ddsd.dwHeight, hdcImage, x, y, dx, dy, SRCCOPY));
-        assert_hres(pdds->ReleaseDC(hdc));
+        StretchBlt(hdc, 0, 0, ddsd.dwWidth, ddsd.dwHeight, hdcImage, x, y, dx, dy, SRCCOPY);
+        pdds->ReleaseDC(hdc);
     }
 
-    assert(DeleteDC(hdcImage));
+    DeleteDC(hdcImage);
 
     return hr;
 }
