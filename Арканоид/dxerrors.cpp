@@ -1,7 +1,5 @@
-#include <ddraw.h>
-#include <dsound.h>
-#include <map>
-#include "dxerrors.h"
+#include "StdAfx.h"
+#pragma hdrstop
 
 class hres2str_map
 {
