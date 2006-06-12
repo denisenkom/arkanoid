@@ -16,8 +16,12 @@ namespace Client {
 
 	// настроечный интерфейс
 	void Connect(const char* server_address);
-	void SendClientInfo();
 	void Disconnect() throw ();
+
+	void BeginCollectingMessages();
+	void SendClientInfo();
+	void WriteClientMovements();
+	void FlushMessages();
 
 	// обработка сообщений
 	void ParseServerMessages();

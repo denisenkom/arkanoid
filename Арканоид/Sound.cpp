@@ -40,7 +40,7 @@ void Sound::Init()
 	hDSound = LoadLibrary("dsound.dll");
 	pDirectSoundCreate = (pDirectSoundCreate_t)GetProcAddress(hDSound, "DirectSoundCreate");
 	pDirectSoundCreate(NULL, &_dsound, NULL);
-	_dsound->SetCooperativeLevel(global_hWnd, DSSCL_PRIORITY);
+	_dsound->SetCooperativeLevel(g_hWnd, DSSCL_PRIORITY);
 
 	DSBUFFERDESC desc = {0};
 	desc.dwSize = sizeof(desc);
@@ -70,7 +70,7 @@ void Sound::Init()
 
 void Sound::PlaySnd(sound_enum sound_enum, float volume, long freq)
 {
-	if (!initialized || !global_hWnd || fMinimized || !fActive)
+	if (!initialized || !g_hWnd || fMinimized || !fActive)
 		return;
 
 	if(_sndbuf[sound_enum] == 0)

@@ -7,6 +7,7 @@
 #include "Client.h"
 #include "log.h"
 #include "Realtime.h"
+#include "Host.h"
 
 /* local variables */
 static rect_s sprites_rects[] = {
@@ -112,6 +113,22 @@ void Screen::Update() {
 	DrawEntities();
 
 	DrawScores();
+
+	static int framesCounter = 0;
+	static float accFramesTime = 0.0f; // accumulated frames time
+	static float fps = 60.0f;
+	framesCounter++;
+	accFramesTime += Host::frametime;
+
+	if(framesCounter % (int)fps == 0) {
+		fps = framesCounter / accFramesTime;
+		framesCounter = 0;
+		accFramesTime = 0.0f;
+	}
+
+	char buf[12];
+	sprintf( buf, "fps: %.2f", static_cast<double>(fps) );
+	Graphics::DrawTxt(0, 0, buf);
 
 	//if (Game::paused)
 	//	Graphics::DrawTxt(SCN_WIDTH/2-20, SCN_HEIGHT/2, "PAUSED");

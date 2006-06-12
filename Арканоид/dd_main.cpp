@@ -85,7 +85,7 @@ void DirectDrawRenderer::HookDirectDraw(bool fullscreen) {
 		cooplevel = DDSCL_EXCLUSIVE | DDSCL_FULLSCREEN;
 	else
 		cooplevel = DDSCL_NORMAL;
-	hres = ddraw->SetCooperativeLevel(global_hWnd, cooplevel);
+	hres = ddraw->SetCooperativeLevel(g_hWnd, cooplevel);
 	if( FAILED(hres) )
 		throw runtime_error("ошибка DirectDrawCreate");
 }
@@ -261,7 +261,7 @@ void DirectDrawRenderer::Flush()
 	else
 	{
 		POINT point = {0, 0};
-		ClientToScreen(global_hWnd, &point);
+		ClientToScreen(g_hWnd, &point);
 		prim->BltFast(point.x, point.y, back, NULL, 0);
 	}
 

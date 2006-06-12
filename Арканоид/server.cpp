@@ -63,7 +63,7 @@ void Server::Activate(bool enable)
 	SendDatagrams();
 }*/
 
-void Server::SendDatagrams()
+void Server::FlushMessages()
 {
 	if (connected_clients <= 0)
 		return;
@@ -234,14 +234,14 @@ char game_map[20][20] = {
 void Server::StartGame()
 {
 	datagramm.buffer.Clear();
-	//Game::LoadMap(game_map);
+	Game::LoadMap(game_map);
 	for (int i = 0; i < 4; i++)
 		if (Game::players[i].active)
 		{
 			Game::SpawnBoard(i);
-			//Game::SpawnEntity(Ball(i, (float)i*30, 30, 20, 10, Game::players[i].color));
+			Game::SpawnEntity(Ball(i, (float)i*30, 30, 30, 15, Game::players[i].color));
 		}
 	Game::paused = false;
 	datagramm.writeByte(SV_START_GAME);
-	SendDatagrams();
+	FlushMessages();
 }

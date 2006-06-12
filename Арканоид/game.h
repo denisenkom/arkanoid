@@ -105,6 +105,7 @@ namespace Game
 
 	void Phisics();
 
+	void MakeScene();
 	void LoadMap(const char game_map[][20]);
 	void SpawnBoard(int pl_id);
 	void SpawnEntity(const Entity &entity);

@@ -322,8 +322,8 @@ void Game::Phisics()
 		Server::datagramm.writeByte(SV_SYNC_ENT);
 		Server::datagramm.writeLong(id);
 		Server::datagramm.writeByte(UPDATE_POS);
-		Server::datagramm.writeFloat((float)ent->x);
-		Server::datagramm.writeFloat((float)ent->y);
+		Server::datagramm.writeFloat(ent->x);
+		Server::datagramm.writeFloat(ent->y);
 	}
 }
 
@@ -396,4 +396,12 @@ void Game::LoadMap(const char game_map[][20])
 				Block block((float)j*20, (float)i*20, block_enum);
 				SpawnEntity(block);
 			}
+}
+
+void Game::MakeScene() {
+	SpawnEntity(Ball(0, 100, 100, 10, 10, YELLOW));
+	SpawnEntity(Ball(0, 150, 150, -10, -10, YELLOW));
+	/*srand(timeGetTime());
+	for (unsigned i = 0; i < 10; i++)
+		SpawnEntity(Ball(0, rand()%600, rand()%600, rand()%200-100, rand()%200-100, YELLOW));*/
 }

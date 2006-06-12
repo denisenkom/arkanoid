@@ -34,7 +34,7 @@ DWORD WINAPI NetworkThread(LPVOID) throw ()
 			Server::datagramm.buffer.Clear();
 			Server::CheckWaitingClients();
 			Server::ParseClientsMessages();
-			Server::SendDatagrams();
+			Server::FlushMessages();
 		}
 		if (Client::connected)
 			Client::ParseServerMessages();
@@ -180,7 +180,7 @@ void NetConnectDlg::GameStarted() throw ()
 
 int NetConnectDlg::Run() {
 	Log_Print("Starting connection dialog...\n");
-	INT_PTR res = DialogBoxParam( global_hInstance, MAKEINTRESOURCE(IDD_NETWORK),
+	INT_PTR res = DialogBoxParam( g_hInstance, MAKEINTRESOURCE(IDD_NETWORK),
 		NULL, &NetConnectDlgProc, 0l );
 	if(res <= 0)
 		throw runtime_error(

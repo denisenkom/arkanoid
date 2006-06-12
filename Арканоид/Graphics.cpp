@@ -17,7 +17,7 @@
 
 /* global variables */
 // defined in winarkanoid.h
-extern HWND global_hWnd = NULL;
+extern HWND g_hWnd = NULL;
 extern int fActive = false;
 extern int fMinimized = false;
 
@@ -90,7 +90,7 @@ static LRESULT CALLBACK wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM l
 				clRect.right = SCN_WIDTH;
 				clRect.bottom = SCN_HEIGHT;
 				::AdjustWindowRect(&clRect, WINDOW_STYLE, FALSE);
-				::MoveWindow(global_hWnd, 20, 20, clRect.right-clRect.left, clRect.bottom-clRect.top, TRUE);
+				::MoveWindow(g_hWnd, 20, 20, clRect.right-clRect.left, clRect.bottom-clRect.top, TRUE);
 				::ShowCursor(TRUE);
 			}
 			else
@@ -141,9 +141,9 @@ void Graphics::Init()
 	if (initialized)
 		return;
 
-	global_hWnd = CreateMainWindow();
+	g_hWnd = CreateMainWindow();
 
-	::ShowWindow(global_hWnd, SW_SHOW);
+	::ShowWindow(g_hWnd, SW_SHOW);
 
 	pRenderer = &DirectDrawRenderer1;
 	pRenderer->Init(fullscreen);
@@ -163,7 +163,7 @@ HWND CreateMainWindow() {
 		CW_USEDEFAULT, CW_USEDEFAULT, windowSize.cx, windowSize.cy,
 		NULL, // root window
 		NULL, // no menu
-		global_hInstance,
+		g_hInstance,
 		NULL  // no params
 	);
 
@@ -181,7 +181,7 @@ void RegisterMainWindowClass() {
 	wcex.lpfnWndProc	= (WNDPROC)wndProc;
 	wcex.cbClsExtra		= 0;
 	wcex.cbWndExtra		= 0;
-	wcex.hInstance		= global_hInstance;
+	wcex.hInstance		= g_hInstance;
 	wcex.hIcon			= NULL;
 	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
 	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
@@ -218,10 +218,10 @@ void Graphics::Shutdown() throw()
 	if(pRenderer)
 		pRenderer->Shutdown();
 
-	if (global_hWnd != NULL)
-		::DestroyWindow(global_hWnd);
+	if (g_hWnd != NULL)
+		::DestroyWindow(g_hWnd);
 
-	::UnregisterClass(WINDOW_CLASS, global_hInstance);
+	::UnregisterClass(WINDOW_CLASS, g_hInstance);
 }
 
 /*void Graphics::DrawTransparent(int scx, int scy)
@@ -297,7 +297,7 @@ int Graphics::LoadImg(const char* img_name)
 	cache[i].data = (unsigned short*)pRenderer->LoadImg(img_name);
 
 	/*HBITMAP hbmp;
-	if ((hbmp = (HBITMAP)::LoadImage(global_hInstance, img_name, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION)) == NULL)
+	if ((hbmp = (HBITMAP)::LoadImage(g_hInstance, img_name, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION)) == NULL)
 		if ((hbmp = (HBITMAP)::LoadImage(NULL, img_name, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION|LR_LOADFROMFILE)) == NULL)
 			throw std::runtime_error(std::string("GDI_LoadImage(): Cannot load image ") += img_name);
 	

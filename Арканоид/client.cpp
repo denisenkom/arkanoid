@@ -153,8 +153,26 @@ void Client::Say(const char *mes)
 	Network::WriteMessage(message, sock);
 }
 
+void Client::BeginCollectingMessages() {
+	Client::message.buffer.Clear();
+}
+
 void Client::SendClientInfo()
 {
 	message.writeByte(CL_INFO);
 	message.writeStr(name);
+}
+
+void Client::WriteClientMovements() {
+	message.writeByte(CL_MOVE);
+	if (Controls::keys[KEY_LEFT] || Controls::keys[KEY_UP])
+		message.writeByte(MOVE_LEFT);
+	else if (Controls::keys[KEY_RIGHT] || Controls::keys[KEY_DOWN])
+		message.writeByte(MOVE_RIGHT);
+	else
+		message.writeByte(NO_MOVE);
+}
+
+void Client::FlushMessages() {
+	Network::WriteMessage(message, sock);
 }

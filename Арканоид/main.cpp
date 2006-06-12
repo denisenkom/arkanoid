@@ -17,6 +17,10 @@
 #include "Game.h"
 #include "winerrors.h"
 
+
+void PumpAnyWindowsMessages();
+
+
 void Log_Print(const char* fmt, ...)
 {
 	FILE * file = fopen("log.txt", "a");
@@ -35,11 +39,11 @@ static void All_Shutdown()
 	Network::Shutdown();
 }
 
-HINSTANCE global_hInstance;
+HINSTANCE g_hInstance;
 
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-	global_hInstance = hInstance;
+	g_hInstance = hInstance;
 
 	try
 	{
@@ -61,26 +65,14 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			Log_Print("Sound not initialized: %s\n", ex.what());
 		}
 
-		Game::SpawnEntity(Ball(0, 100, 100, 10, 10, YELLOW));
-		Game::SpawnEntity(Ball(0, 150, 150, -10, -10, YELLOW));
-		/*srand(timeGetTime());
-		for (unsigned i = 0; i < 10; i++)
-			Game::SpawnEntity(Ball(0, rand()%600, rand()%600, rand()%200-100, rand()%200-100, YELLOW));*/
-		Server::SendDatagrams();
+		//Game::MakeScene();
+
+		Server::FlushMessages();
 
 		while (1)
 		{
-			MSG msg;
-			while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-			{
-				if (msg.message == WM_QUIT)
-				{
-					All_Shutdown();
-					return 0;
-				}
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
+			PumpAnyWindowsMessages();
+
 			static float time(0), oldtime(0);
 			time = RealTime::getTime();
 			float dt = time - oldtime;
@@ -92,35 +84,21 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 			Host::frametime = dt;
 
-			//double time1 = RealTime::getTime();
 			if (Server::active)
 			{
 				Server::datagramm.buffer.Clear();
 				Server::ParseClientsMessages();
 				Game::Phisics();
-				Server::SendDatagrams();
+				Server::FlushMessages();
 			}
-			//double time2 = RealTime::getTime();
 			if (Client::connected)
 			{
-				//double time1 = RealTime::getTime();
 				Client::ParseServerMessages();
-				//double time2 = RealTime::getTime();
-				Client::message.buffer.Clear();
-				Client::message.writeByte(CL_MOVE);
-				if (Controls::keys[KEY_LEFT] || Controls::keys[KEY_UP])
-					Client::message.writeByte(MOVE_LEFT);
-				else if (Controls::keys[KEY_RIGHT] || Controls::keys[KEY_DOWN])
-					Client::message.writeByte(MOVE_RIGHT);
-				else
-					Client::message.writeByte(NO_MOVE);
-				Network::WriteMessage(Client::message, Client::sock);
-				//double time3 = RealTime::getTime();
+				Client::BeginCollectingMessages();
+				Client::WriteClientMovements();
+				Client::FlushMessages();
 				Screen::Update();
-				//double time4 = RealTime::getTime();
 			}
-			//double time3 = RealTime::getTime();
-			//Log_Print("server %.3f : client %.3f\n", time2-time1, time3-time2);
 			oldtime = time;
 		}
 	}
@@ -128,8 +106,22 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 	{
 		All_Shutdown();
 		::MessageBox( NULL, ex.what(), NULL, MB_ICONSTOP );
-		return -1;
+		return 3;
 	}
 
-	return -1;
+	return 3;
+}
+
+void PumpAnyWindowsMessages() {
+	MSG msg;
+	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+	{
+		if (msg.message == WM_QUIT)
+		{
+			All_Shutdown();
+			exit(msg.wParam);
+		}
+		TranslateMessage(&msg);
+		DispatchMessage(&msg);
+	}
 }

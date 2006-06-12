@@ -14,7 +14,7 @@ namespace Server {
 
 	// обработка сообщений
 	void ParseClientsMessages();
-	void SendDatagrams();
+	void FlushMessages();
 
 	// интерфейс для game
 	void Sound(sound_enum sound_enum, float volume, long freq);

@@ -10,7 +10,7 @@
 
 void DIBRenderer::Init(bool fullscreen)
 {
-	hdc = ::GetDC(global_hWnd);
+	hdc = ::GetDC(g_hWnd);
 	BITMAPINFO bmpinfo;
 	bmpinfo.bmiHeader.biSize = sizeof(bmpinfo.bmiHeader);
 	bmpinfo.bmiHeader.biWidth = SCN_WIDTH;
@@ -35,7 +35,7 @@ void DIBRenderer::Init(bool fullscreen)
 void DIBRenderer::Shutdown()
 {
 	::DeleteDC(hbackdc);
-	::ReleaseDC(global_hWnd, hdc);
+	::ReleaseDC(g_hWnd, hdc);
 }
 
 /*void DIB_Clear()
