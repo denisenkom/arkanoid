@@ -21,80 +21,67 @@ bool Client::connected = false;
 char Client::name[256] = "mikhail";
 remote_ent Client::entities[MAX_ENTITIES] = {0};
 player Client::players[MAX_PLAYERS] = {0};
+long Client::LastFrame = -1;
 
-void Client::ParseServerMessages()
+void Client::ParseServerMessage()
 {
-	if (!Client::connected)
-		return;
-
-	while (1) {
-		int ret = Network::ReadMessage(message, sock);
-
-		if (ret == -1)
-			throw std::exception("Connection has broken.");
-
-		if (ret == 0)
-			return;
-
-		message.beginRead();
-		while (!message.eom())
+	while (!message.eom())
+	{
+		sv_cmd cmd = (sv_cmd)message.readByte();
+		switch (cmd)
 		{
-			sv_cmd cmd = (sv_cmd)message.readByte();
-			switch (cmd)
-			{
-			case SV_SEND_INFO:
-				player_id = message.readByte();
+		case SV_SEND_INFO:
+			player_id = message.readByte();
+		break;
+
+		case SV_UPDATE_PLAYERS_LIST: {
+			for (int i = 0; i < 4; i++) {
+				Client::players[i].active = message.readByte();
+				Client::players[i].color = (color_enum)message.readByte();
+				strcpy(Client::players[i].name, message.readStr());
+				Client::players[i].pts = message.readLong();
+			}
+			NetConnectDlg::UpdatePlayersList();
+		}
+		break;
+
+		case SV_SYNC_ENT: {
+			int id = message.readLong();
+			int mask = message.readByte();
+			if (mask & UPDATE_POS) {
+				Client::entities[id].x = message.readFloat();
+				Client::entities[id].y = message.readFloat();
+			}
+			if (mask & UPDATE_VIS) {
+				Client::entities[id].visible = message.readByte();
+			}
+			if (mask & UPDATE_SPR) {
+				Client::entities[id].sprite = (sprites_enum)message.readLong();
+			}
+		}
+		break;
+
+		case SV_SOUND: {
+			sound_enum snd = static_cast<sound_enum>(message.readLong());
+			float volume = message.readFloat();
+			long freq = message.readLong();
+			Sound::PlaySnd(snd, volume, freq);
+		}
+		break;
+
+		case SV_PRINT: {
+			int pid = message.readByte();
+			char* mes = message.readStr();
+			NetConnectDlg::Chat(pid, mes);
+		}
+		break;
+
+		case SV_START_GAME:
+			NetConnectDlg::GameStarted();
 			break;
 
-			case SV_UPDATE_PLAYERS_LIST: {
-				for (int i = 0; i < 4; i++) {
-					Client::players[i].active = message.readByte();
-					Client::players[i].color = (color_enum)message.readByte();
-					strcpy(Client::players[i].name, message.readStr());
-					Client::players[i].pts = message.readLong();
-				}
-				NetConnectDlg::UpdatePlayersList();
-			}
-			break;
-
-			case SV_SYNC_ENT: {
-				int id = message.readLong();
-				int mask = message.readByte();
-				if (mask & UPDATE_POS) {
-					Client::entities[id].x = message.readFloat();
-					Client::entities[id].y = message.readFloat();
-				}
-				if (mask & UPDATE_VIS) {
-					Client::entities[id].visible = message.readByte();
-				}
-				if (mask & UPDATE_SPR) {
-					Client::entities[id].sprite = (sprites_enum)message.readLong();
-				}
-			}
-			break;
-
-			case SV_SOUND: {
-				sound_enum snd = static_cast<sound_enum>(message.readLong());
-				float volume = message.readFloat();
-				long freq = message.readLong();
-				Sound::PlaySnd(snd, volume, freq);
-			}
-			break;
-
-			case SV_PRINT: {
-				int pid = message.readByte();
-				char* mes = message.readStr();
-				NetConnectDlg::Chat(pid, mes);
-			}
-			break;
-
-			case SV_START_GAME:
-				NetConnectDlg::GameStarted();
-				break;
-
-			default:
-				throw std::exception("Invalid server message.");
-			}
+		default:
+			throw std::exception("Invalid server message.");
 		}
 	}
 }

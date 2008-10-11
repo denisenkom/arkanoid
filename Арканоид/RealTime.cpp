@@ -20,13 +20,3 @@ float RealTime::getTime() {
 	QueryPerformanceCounter(&_time);
 	return _time.QuadPart/_freq - _time_offset;
 }
-
-void RealTime::setTime(float time) {
-	_time_offset = getTime() - time;
-}
-
-void RealTime::wait(float delay_time) {
-	if (!_initialized) _init();
-	float end_time = getTime() + delay_time;
-	while (getTime() < end_time);
-}

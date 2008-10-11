@@ -4,6 +4,7 @@ namespace Server {
 
 	extern bool active;
 	extern Message datagramm;
+	extern long FrameNo;
 
 	void Shutdown();
 

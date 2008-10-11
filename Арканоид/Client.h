@@ -12,7 +12,8 @@ namespace Client {
 	extern remote_ent entities[MAX_ENTITIES];
 	extern player players[MAX_PLAYERS];
 	extern Message message;
-	extern sock;
+	extern int sock;
+	extern long LastFrame;
 
 	// настроечный интерфейс
 	void Connect(const char* server_address);
@@ -24,7 +25,7 @@ namespace Client {
 	void FlushMessages();
 
 	// обработка сообщений
-	void ParseServerMessages();
+	void ParseServerMessage();
 
 	// chat
 	void Say(const char* mes);

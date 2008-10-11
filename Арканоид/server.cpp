@@ -34,6 +34,7 @@ static void DropClient_ConnectionLost(int id)
 
 bool Server::active = false;
 Message Server::datagramm;
+long Server::FrameNo = 0;
 
 void Server::Shutdown()
 {

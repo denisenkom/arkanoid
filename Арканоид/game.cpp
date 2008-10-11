@@ -263,62 +263,62 @@ void Game::Phisics()
 		ent->x += ent->vx*Host::frametime;
 		ent->y += ent->vy*Host::frametime;
 
-		if (!ent->clip)
-			continue;
+		if (ent->clip)
+		{
 
-		// clip to game field
-		//bool still_intersect = false;
-		//do {
-			if (ent->x < 0)
-			{
-				ent->x = -ent->x;
-				ent->vx *= -1;
-				//still_intersect = true;
-				ent->HitBounds(LEFT);
-			}
-			if (ent->y < 0)
-			{
-				ent->y = -ent->y;
-				ent->vy *= -1;
-				//still_intersect = true;
-				ent->HitBounds(BOTTOM);
-			}
-			if (ent->x > GAME_WIDTH - ent->width)
-			{
-				ent->x = GAME_WIDTH - ent->width - 0.1f;
-				ent->vx *= -1;
-				//still_intersect = true;
-				ent->HitBounds(RIGHT);
-			}
-			if (ent->y > GAME_HEIGHT - ent->height)
-			{
-				ent->y = GAME_HEIGHT - ent->height - 0.1f;
-				ent->vy *= -1;
-				//still_intersect = true;
-				ent->HitBounds(TOP);
-			}
-
-			// проверка пересечений с другими элементами
-			for (int i = 0; i < MAX_ENTITIES; i++)
-			{
-				if (i != id
-					&& Game::entities[i] != 0
-					&& Game::entities[i]->clip
-					&& ent->IsIntersectsWith(*Game::entities[i])
-					/*isIntersects(ent->x, ent->y, ent->width, ent->height,
-						Game::entities[i]->x, Game::entities[i]->y, Game::entities[i]->width, Game::entities[i]->height)*/
-				)
-				{	
-					RepairIntersection(*ent, *Game::entities[i]);
+			// clip to game field
+			//bool still_intersect = false;
+			//do {
+				if (ent->x < 0)
+				{
+					ent->x = -ent->x;
+					ent->vx *= -1;
 					//still_intersect = true;
-					ent->Hit(*Game::entities[i]);
+					ent->HitBounds(LEFT);
 				}
-			}
-			//if (still_intersect)
-			//	Server::Sound(BALL_HIT, 1);
-		//}
-		//while(still_intersect);
+				if (ent->y < 0)
+				{
+					ent->y = -ent->y;
+					ent->vy *= -1;
+					//still_intersect = true;
+					ent->HitBounds(BOTTOM);
+				}
+				if (ent->x > GAME_WIDTH - ent->width)
+				{
+					ent->x = GAME_WIDTH - ent->width - 0.1f;
+					ent->vx *= -1;
+					//still_intersect = true;
+					ent->HitBounds(RIGHT);
+				}
+				if (ent->y > GAME_HEIGHT - ent->height)
+				{
+					ent->y = GAME_HEIGHT - ent->height - 0.1f;
+					ent->vy *= -1;
+					//still_intersect = true;
+					ent->HitBounds(TOP);
+				}
 
+				// проверка пересечений с другими элементами
+				for (int i = 0; i < MAX_ENTITIES; i++)
+				{
+					if (i != id
+						&& Game::entities[i] != 0
+						&& Game::entities[i]->clip
+						&& ent->IsIntersectsWith(*Game::entities[i])
+						/*isIntersects(ent->x, ent->y, ent->width, ent->height,
+							Game::entities[i]->x, Game::entities[i]->y, Game::entities[i]->width, Game::entities[i]->height)*/
+					)
+					{	
+						RepairIntersection(*ent, *Game::entities[i]);
+						//still_intersect = true;
+						ent->Hit(*Game::entities[i]);
+					}
+				}
+				//if (still_intersect)
+				//	Server::Sound(BALL_HIT, 1);
+			//}
+			//while(still_intersect);
+		}
 		Server::datagramm.writeByte(SV_SYNC_ENT);
 		Server::datagramm.writeLong(id);
 		Server::datagramm.writeByte(UPDATE_POS);
@@ -396,12 +396,4 @@ void Game::LoadMap(const char game_map[][20])
 				Block block((float)j*20, (float)i*20, block_enum);
 				SpawnEntity(block);
 			}
-}
-
-void Game::MakeScene() {
-	SpawnEntity(Ball(0, 100, 100, 10, 10, YELLOW));
-	SpawnEntity(Ball(0, 150, 150, -10, -10, YELLOW));
-	/*srand(timeGetTime());
-	for (unsigned i = 0; i < 10; i++)
-		SpawnEntity(Ball(0, rand()%600, rand()%600, rand()%200-100, rand()%200-100, YELLOW));*/
 }

@@ -3,6 +3,7 @@
 
 #include "a_shared.h"
 #include "Screen.h"
+#include "Game.h"
 #include "Graphics.h"
 #include "Client.h"
 #include "log.h"
@@ -110,7 +111,7 @@ void Screen::Update() {
 
 	DrawGameField();
 
-	DrawEntities();
+	DbgDrawServerEntities();
 
 	DrawScores();
 
@@ -126,8 +127,8 @@ void Screen::Update() {
 		accFramesTime = 0.0f;
 	}
 
-	char buf[12];
-	sprintf( buf, "fps: %.2f", static_cast<double>(fps) );
+	char buf[256];
+	sprintf( buf, "fps: %.2f, frame: %d", static_cast<double>(fps), Client::LastFrame );
 	Graphics::DrawTxt(0, 0, buf);
 
 	//if (Game::paused)
@@ -161,6 +162,20 @@ void Screen::DrawGameField() {
 	rect.width = BACK_WIDTH-rect.left;
 	rect.height = GAME_HEIGHT-BACK_HEIGHT-rect.top;
 	Graphics::DrawImg(backgr_img, GAME_X, GAME_Y+BACK_HEIGHT, rect);
+}
+
+void Screen::DbgDrawServerEntities() {
+	for (int i = 0; i < MAX_ENTITIES; i++)
+	{
+		if (Game::entities[i] == 0 || !Game::entities[i]->visible)
+			continue;
+		int spriteX = GAME_X + (int)Game::entities[i]->x;
+		int spriteY =
+			GAME_Y + GAME_HEIGHT -
+			int(Game::entities[i]->y) +
+			int(sprites_rects[Game::entities[i]->sprite].height);
+		DrawSprite(spriteX, spriteY, Game::entities[i]->sprite);
+	}
 }
 
 void Screen::DrawEntities() {
