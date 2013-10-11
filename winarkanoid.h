@@ -8,5 +8,3 @@ extern HINSTANCE g_hInstance;
 
 extern int fActive;
 extern int fMinimized;
-
-LRESULT CALLBACK wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
