@@ -166,7 +166,7 @@ void DirectDrawRenderer::Clear()
 	back->Blt(NULL, NULL, NULL, DDBLT_COLORFILL, &fx);
 }
 
-void DirectDrawRenderer::Shutdown()
+void DirectDrawRenderer::Shutdown() throw()
 {
 	if (back)
 	{
