@@ -1,14 +1,14 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
 #include "a_shared.h"
-#include "Screen.h"
-#include "NET.h"
-#include "Client.h"
-#include "NetConnectDlg.h"
-#include "Sound.h"
-#include "Controls.h"
-#include "Realtime.h"
+#include "screen.h"
+#include "net.h"
+#include "client.h"
+#include "netconnectdlg.h"
+#include "sound.h"
+#include "controls.h"
+#include "realtime.h"
 #include "log.h"
 
 /* Local variables */

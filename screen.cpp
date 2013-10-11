@@ -1,13 +1,13 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
 #include "a_shared.h"
-#include "Screen.h"
-#include "Graphics.h"
-#include "Client.h"
+#include "screen.h"
+#include "graphics.h"
+#include "client.h"
 #include "log.h"
-#include "Realtime.h"
-#include "Host.h"
+#include "realtime.h"
+#include "host.h"
 
 /* local variables */
 static rect_s sprites_rects[] = {

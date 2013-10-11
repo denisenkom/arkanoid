@@ -1,13 +1,13 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
 #include "a_shared.h"
-#include "Server.h"
-#include "Client.h"
-#include "Host.h"
-#include "Controls.h"
+#include "server.h"
+#include "client.h"
+#include "host.h"
+#include "controls.h"
 #include "log.h"
-#include "Realtime.h"
+#include "realtime.h"
 
 extern float Host::frametime = 0;
 //extern int Host::exit = 0;

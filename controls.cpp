@@ -1,7 +1,7 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
 #include "a_shared.h"
-#include "Controls.h"
+#include "controls.h"
 
 bool Controls::keys[KEYS_NUM] = {false};

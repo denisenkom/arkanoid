@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 
 CHAR ConnectDlg::address[256] = "localhost";
 

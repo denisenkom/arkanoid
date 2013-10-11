@@ -1,7 +1,7 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
-#include "WINException.h"
+#include "winexception.h"
 
 WINException::WINException(const char * msg)
 	: message(msg), errid(::GetLastError())

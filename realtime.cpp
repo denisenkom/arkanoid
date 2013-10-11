@@ -1,7 +1,7 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
-#include "RealTime.h"
+#include "realtime.h"
 
 float RealTime::_freq = 0;
 float RealTime::_time_offset = 0;

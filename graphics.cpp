@@ -1,18 +1,18 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
 #include "winerrors.h"
 #include "dxerrors.h"
 
 #include "a_shared.h"
-#include "Graphics.h"
-#include "Screen.h"
+#include "graphics.h"
+#include "screen.h"
 #include "ddutil.h"
-#include "WINException.h"
+#include "winexception.h"
 #include "debug.h"
 #include "winarkanoid.h"
 #include "win_gr.h"
-#include "Controls.h"
+#include "controls.h"
 
 
 /* global variables */

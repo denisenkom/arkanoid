@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
 #include "winerrors.h"
@@ -8,7 +8,7 @@
 #include "a_shared.h"
 #include "winarkanoid.h"
 #include "win_gr.h"
-#include "Graphics.h"
+#include "graphics.h"
 
 #include "log.h"
 

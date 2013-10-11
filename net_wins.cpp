@@ -1,5 +1,5 @@
 #include "net_wins.h"
-#include "StdAfx.h"
+#include "stdafx.h"
 
 void WinsockDriver::Init() {
 	WSADATA wsadata;

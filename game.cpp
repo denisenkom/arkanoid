@@ -1,10 +1,10 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
 #include "a_shared.h"
-#include "Game.h"
-#include "Server.h"
-#include "Host.h"
+#include "game.h"
+#include "server.h"
+#include "host.h"
 
 /* local routines */
 

@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
 class hres2str_map

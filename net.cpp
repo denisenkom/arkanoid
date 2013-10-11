@@ -1,8 +1,8 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
 #include "a_shared.h"
-#include "NET.h"
+#include "net.h"
 
 static int port = 25000;
 

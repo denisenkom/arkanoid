@@ -3,7 +3,7 @@
 
 #include <windows.h>
 #include <ddraw.h>
-#include "WINException.h"
+#include "winexception.h"
 
 //extern LPDIRECTDRAWSURFACE _prim;
 //extern LPDIRECTDRAWSURFACE _back;

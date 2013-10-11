@@ -1,10 +1,10 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
 #include "a_shared.h"
-#include "NET.h"
-#include "Server.h"
-#include "Game.h"
+#include "net.h"
+#include "server.h"
+#include "game.h"
 
 /* local variables */
 static struct client

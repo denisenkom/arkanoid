@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
 using namespace std;
@@ -7,16 +7,16 @@ using namespace std;
 
 #include "a_shared.h"
 #include "winarkanoid.h"
-#include "Server.h"
-#include "Client.h"
-#include "Entities.h"
-#include "Game.h"
-#include "NetConnectDlg.h"
-#include "Arkanoid.h"
-#include "Graphics.h"
+#include "server.h"
+#include "client.h"
+#include "entities.h"
+#include "game.h"
+#include "netconnectdlg.h"
+#include "arkanoid.h"
+#include "graphics.h"
 #include "resource.h"
 #include "log.h"
-#include "WINException.h"
+#include "winexception.h"
 
 HWND NetConnectDlg::hwnd = NULL;
 HWND NetConnectDlg::hwndListView = NULL;

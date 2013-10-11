@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
 #include "winerrors.h"
@@ -6,8 +6,8 @@
 
 #include "a_shared.h"
 #include "winarkanoid.h"
-#include "Sound.h"
-#include "WINException.h"
+#include "sound.h"
+#include "winexception.h"
 #include "dsound.h"
 #include "dsutil.h"
 #include "debug.h"

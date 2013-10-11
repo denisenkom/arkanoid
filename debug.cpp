@@ -1,5 +1,5 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
-#include "Debug.h"
+#include "debug.h"
 

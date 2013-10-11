@@ -1,8 +1,8 @@
-#include "StdAfx.h"
+#include "stdafx.h"
 #pragma hdrstop
 
 #include "a_shared.h"
-#include "Game.h"
+#include "game.h"
 
 Entity::Entity(int id, int clip, int visible, float x, float y, float width, float height, float vx, float vy, sprites_enum sprite) :
 	id(id), clip(clip), visible(visible), x(x), y(y), width(width), height(height), vx(vx), vy(vy), sprite(sprite)
