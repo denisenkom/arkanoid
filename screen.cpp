@@ -97,12 +97,12 @@ void Screen::Init()
 	Log_Print("Loading sprites...\n");
 	sprites_img = Graphics::LoadImg("gfx/sprites.bmp");
 	if (sprites_img == -1)
-		throw std::exception("Failed to load sprites.");
+		throw std::runtime_error("Failed to load sprites.");
 
 	Log_Print("Loading background...\n");
 	backgr_img = Graphics::LoadImg("gfx/back4.bmp");
 	if (backgr_img == -1)
-		throw std::exception("Failed to load background.");
+		throw std::runtime_error("Failed to load background.");
 }
 
 void Screen::Update() {
