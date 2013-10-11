@@ -39,7 +39,7 @@ Block::Block(float x, float y, block_enum block)
 		base_health = health = 5;
 		break;
 	default:
-		throw std::exception("Block::Init() Направильное (или неизвестное) значение параметра block.");
+		throw std::runtime_error("Block::Init() Направильное (или неизвестное) значение параметра block.");
 	}
 }
 
