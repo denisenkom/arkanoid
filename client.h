@@ -12,7 +12,7 @@ namespace Client {
 	extern remote_ent entities[MAX_ENTITIES];
 	extern player players[MAX_PLAYERS];
 	extern Message message;
-	extern sock;
+	extern int sock;
 
 	// настроечный интерфейс
 	void Connect(const char* server_address);
