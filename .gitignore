@@ -1,0 +1,12 @@
+*.opensdf
+*.sdf
+*.suo
+*.user
+Debug
+Release
+UpgradeLog.XML
+vssver2.scc
+ipch
+mssccprj.scc
+log.txt
+ZbThumbnail.info
