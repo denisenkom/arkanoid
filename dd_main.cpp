@@ -130,26 +130,18 @@ void DirectDrawRenderer::CreateBackBuffer(bool fullscreen) {
 	HRESULT hres;
 	if (fullscreen)
 	{
-		DDSCAPS2 caps;
+		DDSCAPS2 caps = {0};
 		caps.dwCaps = DDSCAPS_BACKBUFFER;
-		caps.dwCaps2 = 0;
-		caps.dwCaps3 = 0;
-		caps.dwCaps4 = 0;
-		caps.dwVolumeDepth = 0;
 		hres = prim->GetAttachedSurface(&caps, &back);
 		if( FAILED(hres) )
 			throw runtime_error("Îøèáêà GetAttachedSurface");
 	}
 	else
 	{
-		DDSURFACEDESC2 desc;
+		DDSURFACEDESC2 desc = {0};
 		desc.dwSize = sizeof(desc);
 		desc.dwFlags = DDSD_CAPS | DDSD_WIDTH | DDSD_HEIGHT;
 		desc.ddsCaps.dwCaps = DDSCAPS_OFFSCREENPLAIN | DDSCAPS_VIDEOMEMORY;
-		desc.ddsCaps.dwCaps2 = 0;
-		desc.ddsCaps.dwCaps3 = 0;
-		desc.ddsCaps.dwCaps4 = 0;
-		desc.ddsCaps.dwVolumeDepth = 0;
 		desc.dwWidth = SCN_WIDTH;
 		desc.dwHeight = SCN_HEIGHT;
 		hres = ddraw->CreateSurface(&desc, &back, NULL);
