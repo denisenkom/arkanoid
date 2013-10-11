@@ -31,7 +31,7 @@ void Client::ParseServerMessages()
 		int ret = Network::ReadMessage(message, sock);
 
 		if (ret == -1)
-			throw std::exception("Connection has broken.");
+			throw std::runtime_error("Connection has broken.");
 
 		if (ret == 0)
 			return;
@@ -93,7 +93,7 @@ void Client::ParseServerMessages()
 				break;
 
 			default:
-				throw std::exception("Invalid server message.");
+				throw std::runtime_error("Invalid server message.");
 			}
 		}
 	}
@@ -129,7 +129,7 @@ void Client::Connect(const char* host)
 
 	sock = Network::Connect(host);
 	if (sock == -1)
-		throw std::exception("Cannot connect to server\n");
+		throw std::runtime_error("Cannot connect to server\n");
 
 	message.buffer.Clear();
 	SendClientInfo();
