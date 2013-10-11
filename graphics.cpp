@@ -17,9 +17,9 @@
 
 /* global variables */
 // defined in winarkanoid.h
-extern HWND g_hWnd = NULL;
-extern int fActive = false;
-extern int fMinimized = false;
+HWND g_hWnd = NULL;
+int fActive = false;
+int fMinimized = false;
 
 
 /* Local variables */
