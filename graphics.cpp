@@ -280,7 +280,7 @@ void Graphics::Flush()
 int Graphics::LoadImg(const char* img_name)
 {
 	if (!initialized)
-		throw std::exception("Called Graphics::LoadImg() on not initialized Graphics.");
+		throw std::runtime_error("Called Graphics::LoadImg() on not initialized Graphics.");
 
 	int free_index = -1;
 
@@ -292,7 +292,7 @@ int Graphics::LoadImg(const char* img_name)
 		}
 
 	if (free_index == -1)
-		throw std::exception("GDI_LoadImage(): No more free cache.");
+		throw std::runtime_error("GDI_LoadImage(): No more free cache.");
 	
 	cache[free_index].data = (unsigned short*)pRenderer->LoadImg(img_name);
 
