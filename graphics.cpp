@@ -294,7 +294,7 @@ int Graphics::LoadImg(const char* img_name)
 	if (free_index == -1)
 		throw std::exception("GDI_LoadImage(): No more free cache.");
 	
-	cache[i].data = (unsigned short*)pRenderer->LoadImg(img_name);
+	cache[free_index].data = (unsigned short*)pRenderer->LoadImg(img_name);
 
 	/*HBITMAP hbmp;
 	if ((hbmp = (HBITMAP)::LoadImage(g_hInstance, img_name, IMAGE_BITMAP, 0, 0, LR_CREATEDIBSECTION)) == NULL)
