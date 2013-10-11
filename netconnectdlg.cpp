@@ -131,7 +131,7 @@ BOOL OnCommand(WORD wNotifyCode, WORD wID, HWND hwndCtl) throw ()
 	}
 }
 
-BOOL CALLBACK NetConnectDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) throw ()
+INT_PTR CALLBACK NetConnectDlgProc(HWND hwndDlg, UINT uMsg, WPARAM wParam, LPARAM lParam) throw ()
 {
 	switch (uMsg)
 	{
