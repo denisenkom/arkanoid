@@ -4,9 +4,9 @@ namespace NetConnectDlg {
 
 extern HWND hwnd, hwndListView, hwndChat;
 
-void UpdatePlayersList();
-void Chat(int id, char* str);
-void GameStarted();
+void UpdatePlayersList() throw();
+void Chat(int id, char* str) throw();
+void GameStarted() throw();
 int Run();	// IDCANCEL/IDOK
 
 };
