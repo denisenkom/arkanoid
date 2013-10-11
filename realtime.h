@@ -9,8 +9,6 @@ private:
 	static void _init();
 public:
 	static float getTime();
-	static void setTime(float time);
-	static void wait(float delay_time);
 };
 
 #endif	// REALTIME_H_INCLUDED

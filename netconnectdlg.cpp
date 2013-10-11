@@ -11,6 +11,7 @@ using namespace std;
 #include "client.h"
 #include "entities.h"
 #include "game.h"
+#include "net.h"
 #include "netconnectdlg.h"
 #include "arkanoid.h"
 #include "graphics.h"
@@ -37,7 +38,20 @@ DWORD WINAPI NetworkThread(LPVOID) throw ()
 			Server::FlushMessages();
 		}
 		if (Client::connected)
-			Client::ParseServerMessages();
+		{
+			while (1)
+			{
+				int ret = Network::ReadMessage(Client::message, Client::sock);
+
+				if (ret == -1)
+					throw std::runtime_error("Connection has broken.");
+
+				if (ret == 0)
+					break;
+				Client::message.beginRead();
+				Client::ParseServerMessage();
+			}
+		}
 		::Sleep(100);
 	}
 	return 0;

@@ -41,10 +41,11 @@ static void All_Shutdown()
 
 HINSTANCE g_hInstance;
 
+extern char game_map[20][20];
+
 int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	g_hInstance = hInstance;
-
 	try
 	{
 		Network::Init();
@@ -65,20 +66,16 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			Log_Print("Sound not initialized: %s\n", ex.what());
 		}
 
-		//Game::MakeScene();
-
 		Server::FlushMessages();
-
+		float oldtime = RealTime::getTime();
 		while (1)
 		{
 			PumpAnyWindowsMessages();
 
-			static float time(0), oldtime(0);
-			time = RealTime::getTime();
-			float dt = time - oldtime;
-
-			if (dt > 0.1f)
-				dt = 0.1f;
+			float currTime = RealTime::getTime();
+			float dt = currTime - oldtime;
+			//if (dt > 0.1f)
+			//	dt = 0.1f;
 			//else if (dt < 0.001)
 			//	dt = 0.001;
 
@@ -86,20 +83,44 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 			if (Server::active)
 			{
+				Server::FrameNo++;
 				Server::datagramm.buffer.Clear();
+				Server::datagramm.writeLong(Server::FrameNo);
 				Server::ParseClientsMessages();
 				Game::Phisics();
 				Server::FlushMessages();
 			}
 			if (Client::connected)
 			{
-				Client::ParseServerMessages();
-				Client::BeginCollectingMessages();
-				Client::WriteClientMovements();
-				Client::FlushMessages();
-				Screen::Update();
+				bool skipFrame = false;
+				while (1)
+				{
+					int ret = Network::ReadMessage(Client::message, Client::sock);
+
+					if (ret == -1)
+						throw std::runtime_error("Connection has broken.");
+
+					if (ret == 0)
+						break;
+
+					Client::message.beginRead();
+					long frame = Client::message.readLong();
+					skipFrame = Client::LastFrame >= frame;
+					if (!skipFrame)
+					{
+						Client::LastFrame = frame;
+						Client::ParseServerMessage();
+					}
+				}
+				if (!skipFrame)
+				{
+					Client::BeginCollectingMessages();
+					Client::WriteClientMovements();
+					Client::FlushMessages();
+					Screen::Update();
+				}
 			}
-			oldtime = time;
+			oldtime = currTime;
 		}
 	}
 	catch (std::exception& ex)
