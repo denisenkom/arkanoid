@@ -65,7 +65,7 @@ IDirectSoundBuffer *DSFLoadSoundBuffer(IDirectSound *pDS, LPTSTR lpFilename)
 	MMCKINFO child;
 	WAVEFORMATEX wavefmt;
 	void * write1 = 0, * write2 = 0;
-	unsigned long length1, length2;
+	DWORD length1, length2;
 
 	if (!(pDS && lpFilename)) return NULL;
 
