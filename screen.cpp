@@ -182,7 +182,7 @@ void Screen::DrawScores() {
 			Client::players[i].name);
 
 		char buffer[5];
-		snprintf(buffer, sizeof(buffer) / sizeof(buffer[0]), "%d", Client::players[i].pts);
+		sprintf(buffer, "%d", Client::players[i].pts);
 		Graphics::DrawTxt( SCN_WIDTH - 240 + 110, i * 120 + 70, buffer);
 	}
 }
