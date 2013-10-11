@@ -3,17 +3,17 @@
 
 #include "winexception.h"
 
-WINException::WINException(const char * msg)
+WINException::WINException(const char * msg) throw()
 	: message(msg), errid(::GetLastError())
 {
 }
 
-WINException::~WINException()
+WINException::~WINException() throw()
 {
 
 }
 
-const char *WINException::what() const
+const char *WINException::what() const throw()
 {
 	char a[256];
 	FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM, 0, errid, 0, a, 256, 0);
