@@ -53,7 +53,7 @@ void Message::beginRead()
 char Message::readByte()
 {
 	if (readpos+sizeof(char) > buffer.data + buffer.cursize)
-		throw std::exception("END OF MESSAGE");
+		throw std::runtime_error("END OF MESSAGE");
 
 	return *readpos++;
 }
@@ -64,14 +64,14 @@ char* Message::readStr()
 	for (; *readpos; readpos++);
 	readpos++;
 	if (readpos > buffer.data + buffer.cursize)
-		throw std::exception("END OF MESSAGE");
+		throw std::runtime_error("END OF MESSAGE");
 	return ret;
 }
 
 long Message::readLong()
 {
 	if (readpos+sizeof(long) > buffer.data + buffer.cursize)
-		throw std::exception("END OF MESSAGE");
+		throw std::runtime_error("END OF MESSAGE");
 
 	long ret = *(long*)readpos;
 	readpos += sizeof(long);
@@ -81,7 +81,7 @@ long Message::readLong()
 float Message::readFloat()
 {
 	if (readpos+sizeof(float) > buffer.data + buffer.cursize)
-		throw std::exception("END OF MESSAGE");
+		throw std::runtime_error("END OF MESSAGE");
 
 	float ret = *(float*)readpos;
 	readpos += sizeof(float);
@@ -128,7 +128,7 @@ void SizeBuffer::Write(const char *data, int length)
 {
 	if (cursize + length > maxsize) {
 		if (!allowOverflow)
-			throw std::exception("SizeBuffer overflow");
+			throw std::runtime_error("SizeBuffer overflow");
 		else
 		{
 			overflowed = true;
@@ -158,7 +158,7 @@ static int OpenSocket() {
 	sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (sock == INVALID_SOCKET) return -1;
 
-	unsigned long _true = 1;
+	ULONG _true = 1;
 	ret = ioctlsocket(sock, FIONBIO, &_true);
 	if (ret == SOCKET_ERROR) goto error;
 
@@ -202,17 +202,17 @@ long hash(char* buffer, long size) {
 	switch (res)
 	{
 	case WSANOTINITIALISED:
-		throw std::exception("WSANOTINITIALISED");
+		throw std::runtime_error("WSANOTINITIALISED");
 	case WSAENETDOWN:
-		throw std::exception("WSAENETDOWN");
+		throw std::runtime_error("WSAENETDOWN");
 	case WSAENOTSOCK:
-		throw std::exception("WSAENOTSOCK");
+		throw std::runtime_error("WSAENOTSOCK");
 	case WSAEINPROGRESS:
-		throw std::exception("WSAEINPROGRESS");
+		throw std::runtime_error("WSAEINPROGRESS");
 	case WSAEINTR:
-		throw std::exception("WSAEINTR");
+		throw std::runtime_error("WSAEINTR");
 	case WSAEWOULDBLOCK:
-		throw std::exception("WSAEWOULDBLOCK");
+		throw std::runtime_error("WSAEWOULDBLOCK");
 	}
 }*/
 
@@ -229,20 +229,20 @@ void Network::Init()
 		{
 			ret = WSAStartup(MAKEWORD(1, 1), &wsadata);
 			if (ret == SOCKET_ERROR)
-				throw std::exception("NET: Windows sockets v1.1 not available.");
+				throw std::runtime_error("NET: Windows sockets v1.1 not available.");
 		}
 		else
-			throw std::exception("NET: Windows sockets v2.0 not available.");
+			throw std::runtime_error("NET: Windows sockets v2.0 not available.");
 	}
 
 	datagramm_socket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (datagramm_socket == INVALID_SOCKET)
-		throw std::exception("NET: Cannot create datagramm socket.");
+		throw std::runtime_error("NET: Cannot create datagramm socket.");
 
 	BOOL _true = TRUE;
 	ret = setsockopt(datagramm_socket, SOL_SOCKET, SO_BROADCAST, (char*)&_true, sizeof(_true));
 	if (ret == SOCKET_ERROR)
-		throw std::exception("NET: Cannot setup datagramm socket.");
+		throw std::runtime_error("NET: Cannot setup datagramm socket.");
 
 	initialized = true;
 }
@@ -269,11 +269,11 @@ void Network::Listen(bool enable)
 		if (listening_socket == INVALID_SOCKET)
 		{
 			listening_socket = 0;
-			throw std::exception("Cannot create listening socket");
+			throw std::runtime_error("Cannot create listening socket");
 		}
 		int ret = listen(listening_socket, SOMAXCONN);
 		if (ret == SOCKET_ERROR)
-			throw std::exception("Listen socket failed.");
+			throw std::runtime_error("Listen socket failed.");
 	}
 	else
 	{
@@ -316,7 +316,7 @@ int Network::Connect(const char* host)
 	int ret = connect(sock, (struct sockaddr*)&address, sizeof(address));
 	if (ret == SOCKET_ERROR) return -1;
 
-	unsigned long _true = 1;
+	ULONG _true = 1;
 	ret = ioctlsocket(sock, FIONBIO, &_true);
 	if (ret == SOCKET_ERROR) goto error;
 
@@ -355,7 +355,7 @@ int Network::ReadMessage(Message& message, int sock) {
 		return -1;
 
 	if (protocolBuffer.size > NET_MAXMESSAGE)
-		throw std::exception("Network read message error message is too long.");
+		throw std::runtime_error("Network read message error message is too long.");
 
 	ret = recv(sock, protocolBuffer.data, protocolBuffer.size, 0);
 	if (ret != protocolBuffer.size) {
@@ -363,7 +363,7 @@ int Network::ReadMessage(Message& message, int sock) {
 	}
 
 	if (protocolBuffer.crc != hash(protocolBuffer.data, protocolBuffer.size))
-		throw std::exception("Network received corrupt message: wrong crc.");
+		throw std::runtime_error("Network received corrupt message: wrong crc.");
 
 	//if (ret != protocolBuffer.size + (int)sizeof(protocolBuffer.size)) {
 	//	return -1;
@@ -386,7 +386,7 @@ int Network::WriteMessage(Message& message, int sock) {
 
 	protocolBuffer.size = message.buffer.cursize;
 	if (protocolBuffer.size > NET_MAXMESSAGE)
-		throw std::exception("Network send error: message too long.");
+		throw std::runtime_error("Network send error: message too long.");
 	
 	memcpy(protocolBuffer.data, message.buffer.data, message.buffer.cursize);
 	protocolBuffer.crc = hash(protocolBuffer.data, protocolBuffer.size);
